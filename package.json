@@ -1,0 +1,28 @@
+{
+  "name": "fintrack---personal-budget-management-platform",
+  "version": "1.0.0",
+  "description": "FinSolutions, an innovative company in the FinTech sector, wants to develop a modern web application for personal budget management. The goal is to allow users to track their expenses, manage their financial goals, and visualize their financial data interactively.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YassineElHassani/FinTrack---Personal-Budget-Management-Platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YassineElHassani/FinTrack---Personal-Budget-Management-Platform/issues"
+  },
+  "homepage": "https://github.com/YassineElHassani/FinTrack---Personal-Budget-Management-Platform#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
