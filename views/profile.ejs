@@ -1,0 +1,179 @@
+<link rel="stylesheet" href="/css/dashboard.css">
+<link rel="stylesheet" href="/css/profile.css">
+
+<div class="sidebar">
+    <div class="logo">
+        <a href="/dashboard"><img src="/assets/fintrack_logo.png" alt="FinTrack Logo" height="50px" width="100px"></a>
+    </div>
+    <ul class="nav-links">
+        <li><a href="/dashboard">Main</a></li>
+        <li><a href="/dashboard/profile" class="active">Edit Profile</a></li>
+        <li><a href="/dashboard/budget">Manage Budget</a></li>
+        <li><a href="/dashboard/category">Manage Category</a></li>
+        <li><a href="/dashboard/saving">Manage Saving</a></li>
+        <li><a href="/dashboard/transactions">View Transactions</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <header class="dashboard-header">
+        <div class="user-info">
+            <span>Welcome, <%= username %>!</span>
+        </div>
+        <form action="/logout" method="POST" class="logout-form">
+            <button type="submit" class="btn-logout"><img src="/assets/exit.png" height="20px" width="20px"
+                    alt="Logout"></button>
+        </form>
+    </header>
+
+    <main class="content-area">
+        <div class="page-header">
+            <h1>Profile Settings</h1>
+            <p>Manage your account information</p>
+        </div>
+
+        <div id="messageContainer" style="display: none;"></div>
+
+        <% if (typeof success !=='undefined' && success) { %>
+        <div class="alert alert-success">
+            <span>
+                <%= success %>
+            </span>
+            <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+        <% } %>
+
+        <% if (typeof error !=='undefined' && error) { %>
+        <div class="alert alert-error">
+            <span>
+                <%= error %>
+            </span>
+            <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+        <% } %>
+
+        <div class="profile-grid">
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>Account Information</h2>
+                    <button class="btn-secondary btn-sm" onclick="openPersonalInfoModal()">Edit</button>
+                </div>
+
+                <div class="section-content">
+                    <div class="info-view">
+                        <div class="info-item">
+                            <label>Username:</label>
+                            <span>
+                                <%= user?.username || username %>
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span>
+                                <%= user?.email || 'Not set' %>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>Security</h2>
+                    <button class="btn-secondary btn-sm" onclick="openPasswordModal()">Change
+                        Password</button>
+                </div>
+
+                <div class="section-content">
+                    <div class="info-view">
+                        <div class="info-item">
+                            <label>Password:</label>
+                            <span>••••••••</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>Account Actions</h2>
+                </div>
+
+                <div class="section-content">
+                    <div class="action-text">
+                        <p><strong>Export Data</strong></p>
+                        <p><strong>Delete Account</strong></p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="exportData()">
+                            <img src="/assets/download.png" alt="Export Data" height="20px"
+                                width="20px">
+                        </button>
+
+                        <button class="btn-danger" onclick="confirmDeleteAccount()">
+                            <img src="/assets/trash.png" alt="Delete Account" height="20px"
+                                width="20px">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div id="personalInfoModal" class="dialog-overlay" style="display: none;">
+    <div class="dialog-content dialog-form">
+        <div class="dialog-header">
+            <h3>Edit Account Information</h3>
+            <button class="dialog-close" onclick="closePersonalInfoModal()">&times;</button>
+        </div>
+        <form id="personalInfoForm" method="POST" action="/dashboard/profile/update">
+            <div class="dialog-body">
+                <div class="form-group">
+                    <label for="modal_username">Username *</label>
+                    <input type="text" id="modal_username" name="username" value="<%= user?.username || username %>"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="modal_email">Email *</label>
+                    <input type="email" id="modal_email" name="email" value="<%= user?.email || '' %>" required>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button type="button" class="btn-secondary" onclick="closePersonalInfoModal()">Cancel</button>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="passwordModal" class="dialog-overlay" style="display: none;">
+    <div class="dialog-content dialog-form">
+        <div class="dialog-header">
+            <h3>Change Password</h3>
+            <button class="dialog-close" onclick="closePasswordModal()">&times;</button>
+        </div>
+        <form id="passwordForm" method="POST" action="/dashboard/profile/change-password">
+            <div class="dialog-body">
+                <div class="form-group">
+                    <label for="modal_new_password">New Password *</label>
+                    <input type="password" id="modal_new_password" name="new_password">
+                    <small>Minimum 8 characters required</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="modal_confirm_password">Confirm New Password *</label>
+                    <input type="password" id="modal_confirm_password" name="confirm_password">
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button type="button" class="btn-secondary" onclick="closePasswordModal()">Cancel</button>
+                <button type="submit" class="btn-primary">Change Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/profile.js"></script>

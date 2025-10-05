@@ -1,0 +1,154 @@
+<link rel="stylesheet" href="/css/dashboard.css">
+<link rel="stylesheet" href="/css/budget.css">
+<link rel="stylesheet" href="/css/common-dialogs.css">
+
+<div class="sidebar">
+    <div class="logo">
+        <a href="/dashboard"><img src="/assets/fintrack_logo.png" alt="FinTrack Logo" height="50px" width="100px"></a>
+    </div>
+    <ul class="nav-links">
+        <li><a href="/dashboard">Main</a></li>
+        <li><a href="/dashboard/profile">Edit Profile</a></li>
+        <li><a href="/dashboard/budget" class="active">Manage Budget</a></li>
+        <li><a href="/dashboard/category">Manage Category</a></li>
+        <li><a href="/dashboard/saving">Manage Saving</a></li>
+        <li><a href="/dashboard/transactions">View Transactions</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <header class="dashboard-header">
+        <div class="user-info">
+            <span>Welcome, <%= username %>!</span>
+        </div>
+        <form action="/logout" method="POST" class="logout-form">
+            <button type="submit" class="btn-logout"><img src="/assets/exit.png" height="20px" width="20px"
+                    alt="Logout"></button>
+        </form>
+    </header>
+
+    <main class="content-area">
+        <div id="messageContainer"></div>
+        <div class="page-header">
+            <h1>Budget Management</h1>
+            <button class="btn-primary" onclick="openCreateModal()">+ Create New Budget</button>
+        </div>
+
+        <% if (typeof success !=='undefined' && success) { %>
+        <div class="alert alert-success">
+            <span>
+                <%= success %>
+            </span>
+            <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+        <% } %>
+
+        <% if (typeof error !=='undefined' && error) { %>
+        <div class="alert alert-error">
+            <span>
+                <%= error %>
+            </span>
+            <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+        <% } %>
+        <div class="cards-grid">
+            <% if (budgets && budgets.length> 0) { %>
+            <% budgets.forEach(budget=> { %>
+            <div class="budget-card">
+                <div class="budget-card-header">
+                    <h3>
+                        <%= budget.name %>
+                    </h3>
+                    <div class="budget-actions">
+                        <button class="btn-secondary img-btn"
+                            onclick="editBudget(<%= budget.id %>)"><img src="/assets/pencil.png"
+                                height="20px" width="20px" alt="Edit Budget"></button>
+                        <button class="btn-danger img-btn"
+                            onclick="deleteBudget(<%= budget.id %>)"><img
+                                src="/assets/trash.png" height="20px" width="20px"
+                                alt="Delete Budget"></button>
+                    </div>
+                </div>
+
+                <div class="budget-details">
+                    <div class="budget-amount">
+                        <span class="label">Budget Amount:</span>
+                        <span class="amount">$<%= budget.total_amount %></span>
+                    </div>
+
+                    <div class="budget-spent">
+                        <span class="label">Spent:</span>
+                        <span class="amount spent">$<%= budget.spent_amount || '0.00' %></span>
+                    </div>
+
+                    <div class="budget-remaining">
+                        <span class="label">Remaining:</span>
+                        <span class="amount remaining">$<%= budget.remaining_amount ||
+                                budget.total_amount %></span>
+                    </div>
+
+                    <div class="budget-period">
+                        <span class="label">Period:</span>
+                        <span class="period">
+                            <%= budget.month_year || 'N/A' %>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill"
+                        style="width: <%= budget.percentage_used || 0 %>%"></div>
+                </div>
+                <div class="progress-text">
+                    <%= budget.percentage_used || 0 %>% used
+                </div>
+            </div>
+        <% }) %>
+        <% } else { %>
+            <div class="empty-state">
+                <h3>No budgets found</h3>
+                <p>Create your first budget to start tracking your expenses</p>
+                <button class="btn-primary" onclick="openCreateModal()">Create Budget</button>
+            </div>
+        <% } %>
+        </div>
+    </main>
+</div>
+
+<div id="budgetModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Create Budget</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+
+        <form id="budgetForm" method="POST" action="/dashboard/budget">
+            <input type="hidden" id="budgetId" name="budgetId" value="">
+
+            <div class="form-group">
+                <label for="name">Budget Name *</label>
+                <input type="text" id="name" name="name" required placeholder="e.g., September Groceries">
+            </div>
+
+            <div class="form-group">
+                <label for="total_amount">Budget Amount *</label>
+                <input type="number" id="total_amount" name="total_amount" step="0.01" min="0.01" required
+                    placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+                <label for="month_year">Month/Year</label>
+                <input type="month" id="month_year" name="month_year"
+                    value="<%= new Date().toISOString().slice(0,7) %>">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-primary" id="submitBtn">Create Budget</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/common-dialogs.js"></script>
+<script src="/js/budget.js"></script>

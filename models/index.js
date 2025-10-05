@@ -4,23 +4,18 @@ const Transaction = require("./Transaction");
 const Saving = require("./Saving");
 const Category = require("./Category");
 
-// User -> Budgets
 User.hasMany(Budget, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 Budget.belongsTo(User, { foreignKey: 'user_id' });
 
-// Budget -> Transactions
-Budget.hasMany(Transaction, { foreignKey: 'budget_id', onDelete: 'CASCADE' });
-Transaction.belongsTo(Budget, { foreignKey: 'budget_id' });
+User.hasMany(Category, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+Category.belongsTo(User, { foreignKey: 'user_id' });
 
-// Budget -> Savings
-Budget.hasMany(Saving, { foreignKey: 'budget_id', onDelete: 'CASCADE' });
-Saving.belongsTo(Budget, { foreignKey: 'budget_id' });
+User.hasMany(Transaction, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+Transaction.belongsTo(User, { foreignKey: 'user_id' });
 
-// Budget -> Categories
-Budget.hasMany(Category, { foreignKey: 'budget_id', onDelete: 'CASCADE' });
-Category.belongsTo(Budget, { foreignKey: 'budget_id' });
+User.hasMany(Saving, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+Saving.belongsTo(User, { foreignKey: 'user_id' });
 
-// Category -> Transactions
 Category.hasMany(Transaction, { foreignKey: 'category_id', onDelete: 'SET NULL' });
 Transaction.belongsTo(Category, { foreignKey: 'category_id' });
 

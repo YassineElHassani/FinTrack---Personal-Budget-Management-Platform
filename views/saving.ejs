@@ -1,0 +1,202 @@
+<link rel="stylesheet" href="/css/dashboard.css">
+<link rel="stylesheet" href="/css/saving.css">
+<link rel="stylesheet" href="/css/common-dialogs.css">
+
+<div class="sidebar">
+    <div class="logo">
+        <a href="/dashboard"><img src="/assets/fintrack_logo.png" alt="FinTrack Logo" height="50px" width="100px"></a>
+    </div>
+    <ul class="nav-links">
+        <li><a href="/dashboard">Main</a></li>
+        <li><a href="/dashboard/profile">Edit Profile</a></li>
+        <li><a href="/dashboard/budget">Manage Budget</a></li>
+        <li><a href="/dashboard/category">Manage Category</a></li>
+        <li><a href="/dashboard/saving" class="active">Manage Saving</a></li>
+        <li><a href="/dashboard/transactions">View Transactions</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <header class="dashboard-header">
+        <div class="user-info">
+            <span>Welcome, <%= username %>!</span>
+        </div>
+        <form action="/logout" method="POST" class="logout-form">
+            <button type="submit" class="btn-logout"><img src="/assets/exit.png" height="20px" width="20px" alt="Logout"></button>
+        </form>
+    </header>
+
+    <main class="content-area">
+        <div id="messageContainer"></div>
+        <div class="page-header">
+            <h1>Savings Goals</h1>
+            <button class="btn-primary" onclick="openCreateModal()">+ Create Savings Goal</button>
+        </div>
+
+        <% if (typeof success !== 'undefined' && success) { %>
+            <div class="alert alert-success">
+                <span><%= success %></span>
+                <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+        <% } %>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error">
+                <span><%= error %></span>
+                <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+        <% } %>
+
+        <% if (typeof totalGoals !== 'undefined' && totalGoals > 0) { %>
+            <div class="savings-overview">
+                <div class="overview-card">
+                    <h3>Savings Summary</h3>
+                    <div class="overview-stats">
+                        <div class="stat">
+                            <span class="number"><%= totalGoals %></span>
+                            <span class="label">Total Goals</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number"><%= completedGoals || 0 %></span>
+                            <span class="label">Completed</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number">$<%= totalSavedAmount || '0.00' %></span>
+                            <span class="label">Total Saved</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number"><%= overallProgress || 0 %>%</span>
+                            <span class="label">Overall Progress</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <div class="savings-grid">
+            <% if (savings && savings.length > 0) { %>
+                <% savings.forEach(saving => { %>
+                    <div class="saving-card <%= saving.status %>">
+                        <div class="saving-header">
+                            <h3><%= saving.goal_name || 'Unnamed Goal' %></h3>
+                        </div>
+
+                        <div class="saving-progress">
+                            <div class="progress-info">
+                                <span class="saved-amount">$<%= saving.saved_amount || '0.00' %></span>
+                                <span class="goal-amount">of $<%= saving.goal_amount %></span>
+                            </div>
+
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: <%= saving.progressPercentage || 0 %>%"></div>
+                            </div>
+
+                            <div class="progress-details">
+                                <span class="percentage"><%= saving.progressPercentage || 0 %>% Complete</span>
+                                <span class="remaining">$<%= saving.remainingAmount || saving.goal_amount %> remaining</span>
+                            </div>
+                        </div>
+
+                        <div class="saving-meta">
+                            <% if (saving.target_date) { %>
+                                <div class="target-date">
+                                    <span class="label">Target Date:</span>
+                                    <span class="date"><%= new Date(saving.target_date).toLocaleDateString() %></span>
+                                    <% if (saving.daysUntilTarget !== null) { %>
+                                        <span class="days-remaining <%= saving.daysUntilTarget < 0 ? 'overdue' : (saving.daysUntilTarget <= 7 ? 'urgent' : '') %>">
+                                            <%= saving.daysUntilTarget < 0 ? `${Math.abs(saving.daysUntilTarget)} days overdue` : `${saving.daysUntilTarget} days left` %>
+                                        </span>
+                                    <% } %>
+                                </div>
+                            <% } %>
+
+                            <div class="status-badge">
+                                <span class="status <%= saving.status %>">
+                                    <%= saving.status === 'completed' ? 'Completed' : (saving.status === 'overdue' ? 'Overdue' : 'In Progress') %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="saving-actions">
+                            <button class="btn-success img-btn" onclick="openAddMoneyModal(<%= saving.id %>, '<%= saving.goal_name %>')"><img src="/assets/plus.png" height="20px" width="20px" alt="Add Money"></button>
+                            <button class="btn-secondary img-btn" onclick="editSaving(<%= saving.id %>)"><img src="/assets/pencil.png" height="20px" width="20px" alt="Edit Goal"></button>
+                            <button class="btn-danger img-btn" onclick="deleteSaving(<%= saving.id %>)"><img src="/assets/trash.png" height="20px" width="20px" alt="Delete Goal"></button>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="empty-state">
+                    <h3>No savings goals found</h3>
+                    <p>Start building your financial future by creating your first savings goal</p>
+                    <button class="btn-primary" onclick="openCreateModal()">Create Savings Goal</button>
+                </div>
+            <% } %>
+        </div>
+    </main>
+</div>
+
+<div id="savingModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Create Savings Goal</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+
+        <form id="savingForm" method="POST" action="/dashboard/saving">
+            <input type="hidden" id="savingId" name="savingId" value="">
+
+            <div class="form-group">
+                <label for="goal_name">Goal Name *</label>
+                <input type="text" id="goal_name" name="goal_name" required placeholder="e.g., Emergency Fund, New Car, Vacation">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="goal_amount">Goal Amount *</label>
+                    <input type="number" id="goal_amount" name="goal_amount" step="0.01" min="0.01" required placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="saved_amount">Current Saved Amount</label>
+                    <input type="number" id="saved_amount" name="saved_amount" step="0.01" min="0" placeholder="0.00">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="target_date">Target Date (Optional)</label>
+                <input type="date" id="target_date" name="target_date">
+                <small>Set a target date to track your progress and stay motivated</small>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-primary" id="submitBtn">Create Goal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="addMoneyModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="addMoneyTitle">Add Money to Goal</h2>
+            <span class="close" onclick="closeAddMoneyModal()">&times;</span>
+        </div>
+
+        <form id="addMoneyForm" method="POST">
+            <div class="form-group">
+                <label for="add_amount">Amount to Add *</label>
+                <input type="number" id="add_amount" name="amount" step="0.01" min="0.01" required placeholder="0.00">
+                <small>Enter the amount you want to add to this savings goal</small>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeAddMoneyModal()">Cancel</button>
+                <button type="submit" class="btn-success">Add Money</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/common-dialogs.js"></script>
+<script src="/js/saving.js"></script>

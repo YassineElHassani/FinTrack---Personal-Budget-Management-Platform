@@ -1,11 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>Fin Track - Smart Budgeting</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body>
-    <h1><%= message %></h1>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo"><a href="/"><img src="/assets/fintrack_logo.png" alt="FinTrack Logo" height="50px"
+                    width="100px"></a></div>
+        <nav>
+            <a href="/login">Login</a>
+            <a href="/register" class="btn-primary">Get Started</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Take Control of Your Finances</h1>
+            <p>Smart tools to track expenses, manage your goals, and visualize your future wealth.</p>
+            <a href="/register" class="btn-primary">Start Free</a>
+        </div>
+        <div class="hero-illustration">
+            <img src="/assets/finance-illustration.png" alt="Finance Illustration">
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="feature-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" alt="Tracking">
+            <h3>Expense Tracking</h3>
+            <p>Stay on top of your spending with daily, weekly, and monthly insights.</p>
+        </div>
+        <div class="feature-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Goals">
+            <h3>Financial Goals</h3>
+            <p>Plan and achieve your savings targets with progress tracking.</p>
+        </div>
+        <div class="feature-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png" alt="Charts">
+            <h3>Interactive Charts</h3>
+            <p>Visualize your income and expenses with beautiful charts.</p>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <div class="section-header">
+            <h2>How FinTrack Works</h2>
+            <p>Get started with smart financial management in just three simple steps</p>
+        </div>
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Connect & Track</h3>
+                    <p>Add your income sources and start tracking your daily expenses across different categories.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Set Budgets & Goals</h3>
+                    <p>Create monthly budgets for each category and set savings goals to achieve your financial dreams.
+                    </p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Monitor & Optimize</h3>
+                    <p>Watch your progress with interactive charts and receive insights to optimize your spending.</p>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="statistics">
+        <div class="cta-content">
+            <h2>Ready to Take Control of Your Finances?</h2>
+            <p>Join thousands of users who have already transformed their financial lives with FinTrack</p>
+            <div class="cta-buttons">
+                <a href="/register" class="btn-primary btn-large">Start Your Journey Today</a>
+                <a href="/login" class="btn-secondary">Already have an account?</a>
+            </div>
+            <div class="cta-benefits">
+                <div class="benefit">Free to start</div>
+                <div class="benefit">No credit card required</div>
+                <div class="benefit">Setup in under 5 minutes</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="section-header">
+            <h2>What Our Users Say</h2>
+            <p>Real stories from people who transformed their financial lives</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"FinTrack helped me save $5,000 in just 6 months! The budget tracking is incredibly intuitive and
+                        the visual reports keep me motivated."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">👨‍💼</div>
+                    <div class="author-info">
+                        <h4>Michael Chen</h4>
+                        <span>Software Engineer</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Finally, a budgeting app that doesn't feel overwhelming. The category system makes it so easy to
+                        see where my money goes each month."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">👩‍🎨</div>
+                    <div class="author-info">
+                        <h4>Sarah Johnson</h4>
+                        <span>Graphic Designer</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"The savings goals feature changed my life. I've now reached my emergency fund target and I'm
+                        working towards my dream vacation!"</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">👨‍🏫</div>
+                    <div class="author-info">
+                        <h4>David Rodriguez</h4>
+                        <span>Teacher</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="margin-bottom: 50px;">
+        <center>
+            <p>© <%= new Date().getFullYear() %> Fin Track. All rights reserved.</p>
+        </center>
+    </footer>
 </body>
+
 </html>

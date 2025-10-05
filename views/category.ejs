@@ -1,0 +1,166 @@
+<link rel="stylesheet" href="/css/dashboard.css">
+<link rel="stylesheet" href="/css/category.css">
+<link rel="stylesheet" href="/css/common-dialogs.css">
+
+<div class="sidebar">
+    <div class="logo">
+        <a href="/dashboard"><img src="/assets/fintrack_logo.png" alt="FinTrack Logo" height="50px" width="100px"></a>
+    </div>
+    <ul class="nav-links">
+        <li><a href="/dashboard">Main</a></li>
+        <li><a href="/dashboard/profile">Edit Profile</a></li>
+        <li><a href="/dashboard/budget">Manage Budget</a></li>
+        <li><a href="/dashboard/category" class="active">Manage Category</a></li>
+        <li><a href="/dashboard/saving">Manage Saving</a></li>
+        <li><a href="/dashboard/transactions">View Transactions</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <header class="dashboard-header">
+        <div class="user-info">
+            <span>Welcome, <%= username %>!</span>
+        </div>
+        <form action="/logout" method="POST" class="logout-form">
+            <button type="submit" class="btn-logout"><img src="/assets/exit.png" height="20px" width="20px" alt="Logout"></button>
+        </form>
+    </header>
+
+    <main class="content-area">
+        <div id="messageContainer"></div>
+        <div class="page-header">
+            <h1>Category Management</h1>
+            <button class="btn-primary" onclick="openCreateModal()">+ Create Category</button>
+        </div>
+
+        <% if (typeof success !== 'undefined' && success) { %>
+            <div class="alert alert-success">
+                <span><%= success %></span>
+                <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+        <% } %>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error">
+                <span><%= error %></span>
+                <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+        <% } %>
+
+        <div class="categories-grid">
+            <% if (categories && categories.length > 0) { %>
+                <% categories.forEach(category => { %>
+                    <div class="category-card">
+                        <div class="category-header">
+                            <h3><%= category.category_name %></h3>
+                            <div class="category-actions">
+                                <button class="btn-secondary img-btn" onclick="editCategory(<%= category.id %>)"><img src="/assets/pencil.png" height="20px" width="20px" alt="Edit Category"></button>
+                                <button class="btn-danger img-btn" onclick="deleteCategory(<%= category.id %>)" <%= category.transactionCount > 0 ? 'disabled title="Cannot delete category with transactions"' : '' %>><img src="/assets/trash.png" height="20px" width="20px" alt="Delete Category"></button>
+                            </div>
+                        </div>
+
+                        <div class="category-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Transactions:</span>
+                                <span class="stat-value"><%= category.transactionCount || 0 %></span>
+                            </div>
+
+                            <div class="stat-item">
+                                <span class="stat-label">Total Income:</span>
+                                <span class="stat-value income">$<%= category.incomeAmount || '0.00' %></span>
+                            </div>
+
+                            <div class="stat-item">
+                                <span class="stat-label">Total Expenses:</span>
+                                <span class="stat-value expense">$<%= category.expenseAmount || '0.00' %></span>
+                            </div>
+
+                            <div class="stat-item total">
+                                <span class="stat-label">Net Amount:</span>
+                                <span class="stat-value <%= (parseFloat(category.incomeAmount || 0) - parseFloat(category.expenseAmount || 0)) >= 0 ? 'positive' : 'negative' %>">
+                                    $<%= ((parseFloat(category.incomeAmount || 0) - parseFloat(category.expenseAmount || 0)).toFixed(2)) %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <% if (category.transactionCount > 0) { %>
+                            <div class="category-footer">
+                                <button class="btn-link" onclick="viewCategoryDetails(<%= category.id %>)">View Transactions</button>
+                            </div>
+                        <% } %>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="empty-state">
+                    <h3>No categories found</h3>
+                    <p>Create your first category to organize your transactions</p>
+                    <button class="btn-primary" onclick="openCreateModal()">Create Category</button>
+                </div>
+            <% } %>
+        </div>
+
+        <% if (categories && categories.length > 0) { %>
+            <div class="quick-stats">
+                <h2>Category Overview</h2>
+                <div class="stats-summary">
+                    <div class="summary-item">
+                        <span class="number"><%= categories.length %></span>
+                        <span class="label">Total Categories</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="number"><%= categories.filter(c => c.transactionCount > 0).length %></span>
+                        <span class="label">Active Categories</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="number"><%= categories.reduce((sum, c) => sum + (c.transactionCount || 0), 0) %></span>
+                        <span class="label">Total Transactions</span>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </main>
+</div>
+
+<script src="/js/common-dialogs.js"></script>
+<script src="/js/category.js"></script>
+
+<div id="categoryModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Create Category</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+
+        <form id="categoryForm" method="POST" action="/dashboard/category">
+            <input type="hidden" id="categoryId" name="categoryId" value="">
+
+            <div class="form-group">
+                <label for="category_name">Category Name *</label>
+                <input type="text" id="category_name" name="category_name" required placeholder="e.g., Groceries, Entertainment, Salary" maxlength="100">
+                <small>Use descriptive names to easily identify your expenses and income</small>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-primary" id="submitBtn">Create Category</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="detailsModal" class="modal">
+    <div class="modal-content large">
+        <div class="modal-header">
+            <h2 id="detailsTitle">Category Details</h2>
+            <span class="close" onclick="closeDetailsModal()">&times;</span>
+        </div>
+
+        <div id="categoryDetails" class="modal-body">
+            <!--  -->
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeDetailsModal()">Close</button>
+        </div>
+    </div>
+</div>

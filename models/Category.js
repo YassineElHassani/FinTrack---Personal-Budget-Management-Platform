@@ -7,7 +7,7 @@ Category.init(
   {
     category_name: { type: DataTypes.STRING, allowNull: false },
   },
-  { sequelize, modelName: 'Category' }
+  { sequelize, modelName: 'Category', timestamps: false }
 );
 
 module.exports = Category;

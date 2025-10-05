@@ -5,10 +5,12 @@ class Saving extends Model { }
 
 Saving.init(
     {
-        saving_amount: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
         goal_name: { type: DataTypes.STRING },
+        goal_amount: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
+        saved_amount: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
+        target_date: { type: DataTypes.DATEONLY },
     },
-    { sequelize, modelName: "Saving" }
+    { sequelize, modelName: "Saving", timestamps: false }
 );
 
 module.exports = Saving;

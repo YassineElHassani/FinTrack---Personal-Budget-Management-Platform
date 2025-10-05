@@ -1,18 +1,22 @@
 create database fin_track;
 
+use fin_track;
+
 create table users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    resetPasswordToken VARCHAR(255),
+    resetPasswordExpires DATETIME
 );
 
 create table budgets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    name VARCHAR(255) NOT NULL, -- exp*. "September Budget"
+    name VARCHAR(255) NOT NULL,
     total_amount DECIMAL(10,2) NOT NULL,
-    month_year VARCHAR(7), -- exp*. "2025-09"
+    month_year VARCHAR(7),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
